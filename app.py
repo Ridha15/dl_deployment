@@ -66,4 +66,5 @@ elif selected_option == "Sentiment Classification":
             padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
             prediction = model.predict(padded_sequence)[0]
             sentiment = "Positive" if prediction == 1 else "Negative"
+
             st.write(f"Predicted Sentiment: {sentiment}")
