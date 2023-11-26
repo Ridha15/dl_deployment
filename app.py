@@ -51,19 +51,19 @@ if selected_option == "Tumor Detection":
                 make_prediction_cnn(image, image_model)
 
 elif selected_option == "Sentiment Classification":
-     class_type = st.radio("Choose one:",["Movie review classification","SMS spam/ham classification"])
-     if class_type == "Movie review classification":
-        model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
-        if model_choice == "Perceptron":
-            text_input = st.text_area("Enter a movie review" )
-            if st.button('Predict'):
-                with open('models/imdb_perceptron_model.pkl', 'rb') as file:
-                    model = pickle.load(file)
-                num_words=1000
-                max_len=200
-                word_index = imdb.get_word_index()
-                input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
-                padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
-                prediction = model.predict(padded_sequence)[0]
-                sentiment = "Positive" if prediction == 1 else "Negative"
-                st.write(f"Predicted Sentiment: {sentiment}")
+    
+    model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
+    if model_choice == "Perceptron":
+        st.subheader("Movie review classification")
+        text_input = st.text_area("Enter a movie review" )
+        if st.button('Predict'):
+            with open('models/imdb_perceptron_model.pkl', 'rb') as file:
+                model = pickle.load(file)
+            num_words=1000
+            max_len=200
+            word_index = imdb.get_word_index()
+            input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
+            padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
+            prediction = model.predict(padded_sequence)[0]
+            sentiment = "Positive" if prediction == 1 else "Negative"
+            st.write(f"Predicted Sentiment: {sentiment}")
