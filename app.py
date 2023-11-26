@@ -50,14 +50,13 @@ if selected_option == "Tumor Detection":
                 make_prediction_cnn(image, image_model)
 
 elif selected_option == "Sentiment Classification":
-     st.subheader("Choose Model")
      class_type = st.radio("Choose one:",["Movie review classification","SMS spam/ham classification"])
      if class_type == "Movie review classification":
         model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
         if model_choice == "Perceptron":
-            text_input = st.text_area("Enter Text" )
+            text_input = st.text_area("Enter a movie review" )
             if st.button('Predict'):
-                with open('imdb_perceptron_model.pkl', 'rb') as file:
+                with open('models\imdb_perceptron_model.pkl', 'rb') as file:
                     model = pickle.load(file)
                 num_words=1000
                 max_len=200
