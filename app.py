@@ -2,6 +2,9 @@ import streamlit as st
 from PIL import Image
 import numpy as np
 from tensorflow.keras.models import load_model
+from tensorflow.keras.datasets import imdb
+from tensorflow.keras.preprocessing.sequence import pad_sequences
+import pickle
 
 # Function to preprocess image for tumor detection
 def preprocess_image(image):
@@ -16,7 +19,7 @@ def make_prediction_cnn(image, image_model):
     img_array = np.array(img)
     img_array = img_array.reshape((1, img_array.shape[0], img_array.shape[1], img_array.shape[2]))
 
-    preprocessed_image = preprocess_image(img_array)
+    preprocessed_image = preprocess_input(img_array)
     prediction = image_model.predict(preprocessed_image)
 
     if prediction > 0.5:
@@ -44,4 +47,23 @@ if selected_option == "Tumor Detection":
         preprocessed_image = preprocess_image(image)
 
         if st.button("Predict"):
-            make_prediction_cnn(image, image_model)
+                make_prediction_cnn(image, image_model)
+
+elif selected_option == "Sentiment Classification":
+     st.subheader("Choose Model")
+     class_type = st.radio("Choose one:",["Movie review classification","SMS spam/ham classification"])
+     if class_type == "Movie review classification":
+        model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
+        if model_choice == "Perceptron":
+            text_input = st.text_area("Enter Text" )
+            if st.button('Predict'):
+                with open('imdb_perceptron_model.pkl', 'rb') as file:
+                    model = pickle.load(file)
+                num_words=1000
+                max_len=200
+                word_index = imdb.get_word_index()
+                input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in user_input.split()]
+                padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
+                prediction = model.predict(padded_sequence)[0]
+                sentiment = "Positive" if prediction == 1 else "Negative"
+            st.write(f"Predicted Sentiment: {sentiment}")
