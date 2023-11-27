@@ -5,6 +5,7 @@ import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.datasets import imdb
 from tensorflow.keras.preprocessing.sequence import pad_sequences
+from tensorflow.keras.preprocessing.text import Tokenizer
 import pickle
 from Perceptron import  Perceptron
 
@@ -57,22 +58,8 @@ elif selected_option == "Sentiment Classification":
         st.subheader("Movie review classification using perceptron")
         text_input = st.text_area("Enter a movie review" )
         if st.button('Predict'):
-            with open('models/imdb_perceptron_model.pkl', 'rb') as file:
-                model = pickle.load(file)
-            num_words=1000
-            max_len=200
-            word_index = imdb.get_word_index()
-            input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
-            padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
-            prediction = model.predict(padded_sequence)[0]
-            sentiment = "Positive" if prediction == 1 else "Negative"
-            st.write(f"Predicted Sentiment: {sentiment}")
-
-    elif model_choice == "Backpropagation":
-            st.subheader("Movie review classification using Backpropagation")
-            text_input = st.text_area("Enter a movie review" )
-            if st.button('Predict'):
-                with open('models/backprop_model.pkl', 'rb') as file:
+            if text_input:
+                with open('models/imdb_perceptron_model.pkl', 'rb') as file:
                     model = pickle.load(file)
                 num_words=1000
                 max_len=200
@@ -81,13 +68,33 @@ elif selected_option == "Sentiment Classification":
                 padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
                 prediction = model.predict(padded_sequence)[0]
                 sentiment = "Positive" if prediction == 1 else "Negative"
-                st.write(f"Predicted Sentiment: {sentiment}")
+                st.write(f"{sentiment}")
+            else:
+                 st.warning("Enter a movie review first.")
+
+    elif model_choice == "Backpropagation":
+            st.subheader("Movie review classification using Backpropagation")
+            text_input = st.text_area("Enter a movie review" )
+            if st.button('Predict'):
+                if text_input:
+                    with open('models/backprop_model.pkl', 'rb') as file:
+                        model = pickle.load(file)
+                    num_words=1000
+                    max_len=200
+                    word_index = imdb.get_word_index()
+                    input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
+                    padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
+                    prediction = model.predict(padded_sequence)[0]
+                    sentiment = "Positive" if prediction == 1 else "Negative"
+                    st.write(f"{sentiment}")
+                else:
+                     st.warning("Enter a movie review first.")
 
     elif model_choice == "DNN":
                 st.subheader("SMS Spam/ham classification using DNN")
                 text_input = st.text_area("Enter an sms text")
                 if st.button("Predict"):
-                    model = load_model("models/dnn_model/h5")
+                    model = load_model("models/dnn_model.h5")
                     with open('tokeniser.pkl', 'rb') as file:
                         tokeniser = pickle.load(file)
                     if text_input:
@@ -99,13 +106,13 @@ elif selected_option == "Sentiment Classification":
                         else:
                             st.write("Spam")
                     else:
-                        st.write("Please enter an sms text first.")
+                        st.warning("Please enter an sms text first.")
 
     elif model_choice == "RNN":
             st.subheader("SMS Spam/ham classification using RNN")
             text_input = st.text_area("Enter an sms text")
             if st.button("Predict"):
-                model = load_model("models/rnn_model/h5")
+                model = load_model("models/rnn_model.h5")
                 with open('tokeniser.pkl', 'rb') as file:
                     tokeniser = pickle.load(file)
                 if text_input:
@@ -118,9 +125,24 @@ elif selected_option == "Sentiment Classification":
                         else:
                             st.write("Spam")
                 else:
-                    st.write("Please enter an sms text first.")
+                    st.warning("Please enter an sms text first.")
             
-
+    elif model_choice == "LSTM":
+            
+            model = load_model("models/lstm_model.h5")
+            text_input = st.text_area("Enter text for sentiment analysis:", "")
+            if st.button("Predict"):
+                if text_input:
+                    tokenizer = Tokenizer(num_words=5000)
+                    input_sequence = tokenizer.texts_to_sequences([text_input])
+                    input_padded = pad_sequences(input_sequence, maxlen=100)
+                    prediction = model.predict(input_padded)
+                    if prediction[0][0]<0.5 :
+                        st.write("Negative")
+                    else:
+                        st.write("Positive")
+                else:
+                     st.warning("Enter a movie review first.")
 
 
 
