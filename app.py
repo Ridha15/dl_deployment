@@ -9,42 +9,19 @@ from tensorflow.keras.preprocessing.text import Tokenizer
 import pickle
 from Perceptron import  Perceptron
 
-# Function to preprocess image for tumor detection
-def preprocess_image(image):
-    image = image.resize((299, 299))
-    image_array = np.array(image)
-    preprocessed_image = preprocess_input(image_array)
 
-    return preprocessed_image
-
-def make_prediction_cnn(image, image_model):
-    img = image.resize((128, 128))
-    img_array = np.array(img)
-    img_array = img_array.reshape((1, img_array.shape[0], img_array.shape[1], img_array.shape[2]))
-
-    preprocessed_image = preprocess_input(img_array)
-    prediction = image_model.predict(preprocessed_image)
-
-    if prediction > 0.5:
-        st.write("Tumor Detected")
-    else:
-        st.write("No Tumor")
-
-# Main content
 st.title("Deep Learning Algorithms")
 
 selected_option = st.radio("Choose an option", ["Tumor Detection", "Sentiment Classification"])
 
-# Upload image if "Tumor Detection" is selected
-if selected_option == "Tumor Detection":
-    st.title("Tumor Detection using CNN")
 
-    st.subheader("Image Input")
+if selected_option == "Tumor Detection":
+    st.subheader("Tumor Detection using CNN")
     image_input = st.file_uploader("Choose an image...", type="jpg")
-    st.image(image_input, caption="Uploaded Image.", use_column_width=True)
-    image = Image.open(image_input)
     if st.button("Predict"):
         if image_input is not None:
+            image = Image.open(image_input)
+            st.image(image_input, caption="Uploaded image.", use_column_width=True)
             model=load_model("models/cnn_model.h5")
             img = image.resize((128, 128))
             img_array = np.array(img)
@@ -52,11 +29,11 @@ if selected_option == "Tumor Detection":
             input_img = np.expand_dims(img, axis=0)
             res = model.predict(input_img)
             if res:
-                st.write("Tumor Detected",res)
+                st.write("Tumor Detected")
             else:
-                st.write("No Tumor",res)
-    else:
-         st.warning("Upload an image.")
+                st.write("No Tumor")
+        else:
+             st.warning("Upload an image.")
 
 elif selected_option == "Sentiment Classification":
     model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM"])
@@ -150,7 +127,5 @@ elif selected_option == "Sentiment Classification":
                         st.write("Positive")
                 else:
                      st.warning("Enter a movie review first.")
-
-
 
 
