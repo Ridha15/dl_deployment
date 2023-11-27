@@ -83,3 +83,6 @@ elif selected_option == "Sentiment Classification":
             sentiment = "Positive" if prediction == 1 else "Negative"
 
             st.write(f"Predicted Sentiment: {sentiment}")
+
+    elif model_choice == "DNN":
+        
