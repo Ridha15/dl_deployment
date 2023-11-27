@@ -85,4 +85,21 @@ elif selected_option == "Sentiment Classification":
             st.write(f"Predicted Sentiment: {sentiment}")
 
     elif model_choice == "DNN":
-        
+        st.subheader("SMS Spam/ham classification")
+        text_input = st.text_area("Enter an sms text")
+        if st.button("Predict"):
+            model = load_model("models/dnn_model/h5")
+            with open('tokeniser.pkl', 'rb') as file:
+                tokeniser = pickle.load(file)
+            if text_input:
+                sequence = tokeniser.texts_to_sequences([text_input])
+                padded_sequence = pad_sequences(sequence, maxlen=10)
+                prediction = model.predict(padded_sequence)[0][0]
+                if prediction >= 0.5:
+                    st.success("not spam")
+                else:
+                    st.write("Spam")
+            else:
+                st.write("Please enter an sms text first.")
+
+
