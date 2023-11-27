@@ -1,6 +1,7 @@
 import streamlit as st
 from PIL import Image
 import numpy as np
+import tensorflow as tf
 from tensorflow.keras.models import load_model
 from tensorflow.keras.datasets import imdb
 from tensorflow.keras.preprocessing.sequence import pad_sequences
@@ -54,7 +55,7 @@ elif selected_option == "Sentiment Classification":
     
     model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
     if model_choice == "Perceptron":
-        st.subheader("Movie review classification")
+        st.subheader("Movie review classification using perceptron")
         text_input = st.text_area("Enter a movie review" )
         if st.button('Predict'):
             with open('models/imdb_perceptron_model.pkl', 'rb') as file:
@@ -66,10 +67,10 @@ elif selected_option == "Sentiment Classification":
             padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
             prediction = model.predict(padded_sequence)[0]
             sentiment = "Positive" if prediction == 1 else "Negative"
-
             st.write(f"Predicted Sentiment: {sentiment}")
+
     elif model_choice == "Backpropagation":
-        st.subheader("Movie review classification")
+        st.subheader("Movie review classification using Backpropagation")
         text_input = st.text_area("Enter a movie review" )
         if st.button('Predict'):
             with open('models/backprop_model.pkl', 'rb') as file:
@@ -81,11 +82,10 @@ elif selected_option == "Sentiment Classification":
             padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
             prediction = model.predict(padded_sequence)[0]
             sentiment = "Positive" if prediction == 1 else "Negative"
-
             st.write(f"Predicted Sentiment: {sentiment}")
 
-    if model_choice == "DNN":
-        st.subheader("SMS Spam/ham classification")
+    elif model_choice == "DNN":
+        st.subheader("SMS Spam/ham classification using DNN")
         text_input = st.text_area("Enter an sms text")
         if st.button("Predict"):
             model = load_model("models/dnn_model/h5")
@@ -96,10 +96,33 @@ elif selected_option == "Sentiment Classification":
                 padded_sequence = pad_sequences(sequence, maxlen=10)
                 prediction = model.predict(padded_sequence)[0][0]
                 if prediction >= 0.5:
-                    st.success("not spam")
+                    st.success("Ham")
                 else:
                     st.write("Spam")
             else:
                 st.write("Please enter an sms text first.")
+
+    elif model_choice == "RNN":
+        st.subheader("SMS Spam/ham classification using RNN")
+        text_input = st.text_area("Enter an sms text")
+        if st.button("Predict"):
+            model = load_model("models/rnn_model/h5")
+            with open('tokeniser.pkl', 'rb') as file:
+                tokeniser = pickle.load(file)
+            if text_input:
+                encoded_text = tokeniser.texts_to_sequences([text_input])
+                padded_text = tf.keras.preprocessing.sequence.pad_sequences(encoded_text, maxlen=10, padding='post')
+                prediction = model.predict(padded_text)
+                if prediction >= 0.5:
+                    if prediction >= 0.5:
+                        st.success("Ham")
+                    else:
+                        st.write("Spam")
+            else:
+                st.write("Please enter an sms text first.")
+            
+
+
+
 
 
