@@ -41,19 +41,25 @@ if selected_option == "Tumor Detection":
 
     st.subheader("Image Input")
     image_input = st.file_uploader("Choose an image...", type="jpg")
-
-    if image_input is not None:
-        image = Image.open(image_input)
-        st.image(image, caption="Uploaded Image.", use_column_width=True)
-
-        # Preprocess the image
-        preprocessed_image = preprocess_image(image)
-
-        if st.button("Predict"):
-                make_prediction_cnn(image, image_model)
+    st.image(image_input, caption="Uploaded Image.", use_column_width=True)
+    image = Image.open(image_input)
+    if st.button("Predict"):
+        if image_input is not None:
+            model=load_model("models/cnn_model.h5")
+            img = image.resize((128, 128))
+            img_array = np.array(img)
+            img_array = img_array.reshape((1, img_array.shape[0], img_array.shape[1], img_array.shape[2]))
+            input_img = np.expand_dims(img, axis=0)
+            res = model.predict(input_img)
+            if res:
+                st.write("Tumor Detected",res)
+            else:
+                st.write("No Tumor",res)
+    else:
+         st.warning("Upload an image.")
 
 elif selected_option == "Sentiment Classification":
-    model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM","GRU"])
+    model_choice = st.selectbox("Select Model", ["Perceptron", "Backpropagation","DNN","RNN","LSTM"])
     if model_choice == "Perceptron":
         st.subheader("Movie review classification using perceptron")
         text_input = st.text_area("Enter a movie review" )
@@ -109,6 +115,7 @@ elif selected_option == "Sentiment Classification":
                         st.warning("Please enter an sms text first.")
 
     elif model_choice == "RNN":
+            
             st.subheader("SMS Spam/ham classification using RNN")
             text_input = st.text_area("Enter an sms text")
             if st.button("Predict"):
@@ -128,9 +135,9 @@ elif selected_option == "Sentiment Classification":
                     st.warning("Please enter an sms text first.")
             
     elif model_choice == "LSTM":
-            
+            st.subheader("Movie review classification using LSTM")
             model = load_model("models/lstm_model.h5")
-            text_input = st.text_area("Enter text for sentiment analysis:", "")
+            text_input = st.text_area("Enter a movie review", "")
             if st.button("Predict"):
                 if text_input:
                     tokenizer = Tokenizer(num_words=5000)
