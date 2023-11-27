@@ -69,19 +69,19 @@ elif selected_option == "Sentiment Classification":
             st.write(f"Predicted Sentiment: {sentiment}")
 
     elif model_choice == "Backpropagation":
-        st.subheader("Movie review classification using Backpropagation")
-        text_input = st.text_area("Enter a movie review" )
-        if st.button('Predict'):
-            with open('models/backprop_model.pkl', 'rb') as file:
-                model = pickle.load(file)
-            num_words=1000
-            max_len=200
-            word_index = imdb.get_word_index()
-            input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
-            padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
-            prediction = model.predict(padded_sequence)[0]
-            sentiment = "Positive" if prediction == 1 else "Negative"
-            st.write(f"Predicted Sentiment: {sentiment}")
+            st.subheader("Movie review classification using Backpropagation")
+            text_input = st.text_area("Enter a movie review" )
+            if st.button('Predict'):
+                with open('models/backprop_model.pkl', 'rb') as file:
+                    model = pickle.load(file)
+                num_words=1000
+                max_len=200
+                word_index = imdb.get_word_index()
+                input_sequence = [word_index[word] if word in word_index and word_index[word] < num_words else 0 for word in text_input.split()]
+                padded_sequence = pad_sequences([input_sequence], maxlen=max_len)
+                prediction = model.predict(padded_sequence)[0]
+                sentiment = "Positive" if prediction == 1 else "Negative"
+                st.write(f"Predicted Sentiment: {sentiment}")
 
     elif model_choice == "DNN":
                 st.subheader("SMS Spam/ham classification using DNN")
