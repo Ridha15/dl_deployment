@@ -84,22 +84,22 @@ elif selected_option == "Sentiment Classification":
             st.write(f"Predicted Sentiment: {sentiment}")
 
     elif model_choice == "DNN":
-            st.subheader("SMS Spam/ham classification using DNN")
-            text_input = st.text_area("Enter an sms text")
-            if st.button("Predict"):
-                model = load_model("models/dnn_model/h5")
-                with open('tokeniser.pkl', 'rb') as file:
-                    tokeniser = pickle.load(file)
-                if text_input:
-                    sequence = tokeniser.texts_to_sequences([text_input])
-                    padded_sequence = pad_sequences(sequence, maxlen=10)
-                    prediction = model.predict(padded_sequence)[0][0]
-                    if prediction >= 0.5:
-                        st.success("Ham")
+                st.subheader("SMS Spam/ham classification using DNN")
+                text_input = st.text_area("Enter an sms text")
+                if st.button("Predict"):
+                    model = load_model("models/dnn_model/h5")
+                    with open('tokeniser.pkl', 'rb') as file:
+                        tokeniser = pickle.load(file)
+                    if text_input:
+                        sequence = tokeniser.texts_to_sequences([text_input])
+                        padded_sequence = pad_sequences(sequence, maxlen=10)
+                        prediction = model.predict(padded_sequence)[0][0]
+                        if prediction >= 0.5:
+                            st.success("Ham")
+                        else:
+                            st.write("Spam")
                     else:
-                        st.write("Spam")
-                else:
-                    st.write("Please enter an sms text first.")
+                        st.write("Please enter an sms text first.")
 
     elif model_choice == "RNN":
             st.subheader("SMS Spam/ham classification using RNN")
